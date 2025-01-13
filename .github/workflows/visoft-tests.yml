@@ -1,141 +1,141 @@
-# name: Test Runner
+name: Test Runner
 
-# on:
-#   push:
-#     branches:
-#       - 'workflows/**'
+on:
+  push:
+    branches:
+      - 'uacias/**'
 
-# jobs:
-#   build:
-#     permissions:
-#       pull-requests: write
-#     runs-on: ubuntu-latest
+jobs:
+  build:
+    permissions:
+      pull-requests: write
+    runs-on: arc-runner-set
 
-#     steps:
-#       - uses: actions/checkout@v3
-#         with:
-#           submodules: true
-#       - name: Install Rust toolchain
-#         uses: actions-rs/toolchain@v1
-#         with:
-#           toolchain: 1.81
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          submodules: true
+      - name: Install Rust toolchain
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: 1.81
 
-#       - name: Cache Rust dependencies
-#         uses: Swatinem/rust-cache@v2
+      - name: Cache Rust dependencies
+        uses: Swatinem/rust-cache@v2
 
-#       - name: Setup build deps
-#         run: |
-#           sudo apt-get update
-#           sudo apt-get install -y wget clang llvm libudev-dev protobuf-compiler libssl-dev pkg-config git
-#       - uses: rui314/setup-mold@v1
-#       - name: Build Madara binary
-#         run: |
-#           cargo build --release --bin madara
-#           mkdir -p bins
-#           cp ./target/release/madara bins/
+      - name: Setup build deps
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y wget clang llvm libudev-dev protobuf-compiler libssl-dev pkg-config git
+      - uses: rui314/setup-mold@v1
+      - name: Build Madara binary
+        run: |
+          cargo build --release --bin madara
+          mkdir -p bins
+          cp ./target/release/madara bins/
 
-#       - uses: actions/upload-artifact@v4
-#         with:
-#           name: madara-bins
-#           path: bins
+      - uses: actions/upload-artifact@v4
+        with:
+          name: madara-bins
+          path: bins
 
-#   madara-tests:
-#     needs: build
-#     runs-on: ubuntu-latest
-#     env:
-#       PAYMASTER_PRIVATE_KEY: "0x77e56c6dc32d40a67f6f7e6625c8dc5e570abe49c0a24e9202e4ae906abcc07"
-#       PAYMASTER_ACCOUNT_ADDRESS: "0x55be462e718c4166d656d11f89e341115b8bc82389c3762a10eade04fcb225d"
-#       UDC_ADDRESS: "0x041a78e741e5af2fec34b695679bc6891742439f7afb8484ecd7766661ad02bf"
-#       ACCOUNT_CLASS_HASH: "0xe2eb8f5672af4e6a4e8a8f1b44989685e668489b0a25437733756c5a34a1d6"
-#       SCARB_VERSION: "2.8.4"
-#     steps:
-#       - name: Install build dependencies
-#         run: |
-#           sudo apt-get update
-#           sudo apt-get install -y build-essential libclang-dev git curl bash libssl-dev pkg-config
+  madara-tests:
+    needs: build
+    runs-on: arc-runner-set
+    env:
+      PAYMASTER_PRIVATE_KEY: "0x77e56c6dc32d40a67f6f7e6625c8dc5e570abe49c0a24e9202e4ae906abcc07"
+      PAYMASTER_ACCOUNT_ADDRESS: "0x55be462e718c4166d656d11f89e341115b8bc82389c3762a10eade04fcb225d"
+      UDC_ADDRESS: "0x041a78e741e5af2fec34b695679bc6891742439f7afb8484ecd7766661ad02bf"
+      ACCOUNT_CLASS_HASH: "0xe2eb8f5672af4e6a4e8a8f1b44989685e668489b0a25437733756c5a34a1d6"
+      SCARB_VERSION: "2.8.4"
+    steps:
+      - name: Install build dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y build-essential libclang-dev git curl bash libssl-dev pkg-config
 
-#       - name: Install Rust toolchain
-#         uses: actions-rs/toolchain@v1
-#         with:
-#           toolchain: 1.81
+      - name: Install Rust toolchain
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: 1.81
 
-#       - name: Cache Rust dependencies
-#         uses: Swatinem/rust-cache@v2
+      - name: Cache Rust dependencies
+        uses: Swatinem/rust-cache@v2
 
     
-#       - name: Install Scarb
-#         run: |
-#           export PATH="$HOME/.local/bin:$HOME/.cargo/bin:$PATH"
-#           curl --proto '=https' --tlsv1.2 -sSf https://docs.swmansion.com/scarb/install.sh | bash -s -- -v $SCARB_VERSION
-#           echo "$HOME/.local/bin" >> $GITHUB_PATH
-#           echo "$HOME/.cargo/bin" >> $GITHUB_PATH
+      - name: Install Scarb
+        run: |
+          export PATH="$HOME/.local/bin:$HOME/.cargo/bin:$PATH"
+          curl --proto '=https' --tlsv1.2 -sSf https://docs.swmansion.com/scarb/install.sh | bash -s -- -v $SCARB_VERSION
+          echo "$HOME/.local/bin" >> $GITHUB_PATH
+          echo "$HOME/.cargo/bin" >> $GITHUB_PATH
 
-#       - name: Checkout madara testnet repository
-#         uses: actions/checkout@v3
-#         with:
-#           repository: neotheprogramist/madara
-#           ref: testnet-with-accounts
-#           path: madara-testnet
+      - name: Checkout madara testnet repository
+        uses: actions/checkout@v3
+        with:
+          repository: neotheprogramist/madara
+          ref: testnet-with-accounts
+          path: madara-testnet
 
-#       - uses: actions/checkout@v3
-#         with:
-#           submodules: true
-#       - name: Install Rust toolchain
-#         uses: actions-rs/toolchain@v1
-#         with:
-#           toolchain: 1.81
+      - uses: actions/checkout@v3
+        with:
+          submodules: true
+      - name: Install Rust toolchain
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: 1.81
 
-#       - name: Cache Rust dependencies
-#         uses: Swatinem/rust-cache@v2
+      - name: Cache Rust dependencies
+        uses: Swatinem/rust-cache@v2
 
-#       - name: Setup build deps
-#         run: |
-#           sudo apt-get update
-#           sudo apt-get install -y wget clang llvm libudev-dev protobuf-compiler libssl-dev pkg-config git
-#       - uses: rui314/setup-mold@v1
-#       - name: Build Madara binary
-#         run: |
-#           cargo build --release --bin madara
-#           mkdir -p bins
-#           cp ./target/release/madara bins/
+      - name: Setup build deps
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y wget clang llvm libudev-dev protobuf-compiler libssl-dev pkg-config git
+      - uses: rui314/setup-mold@v1
+      - name: Build Madara binary
+        run: |
+          cargo build --release --bin madara
+          mkdir -p bins
+          cp ./target/release/madara bins/
 
-#       - name: Download madara binary
-#         uses: actions/download-artifact@v4
-#         with:
-#           name: madara-bins
-#           path: /tmp/bins
+      - name: Download madara binary
+        uses: actions/download-artifact@v4
+        with:
+          name: madara-bins
+          path: /tmp/bins
 
-#       - run: chmod +x /tmp/bins/madara
+      - run: chmod +x /tmp/bins/madara
 
-#       - name: Start madara full node
-#         run: |
-#           /tmp/bins/madara --full --name Madara --preset devnet --base-path ../madara_db_full_node --no-l1-sync --strk-gas-price 0 --strk-blob-gas-price 0 --rpc-port 9944 &
+      - name: Start madara full node
+        run: |
+          /tmp/bins/madara --full --name Madara --preset devnet --base-path ../madara_db_full_node --no-l1-sync --strk-gas-price 0 --strk-blob-gas-price 0 --rpc-port 9944 &
 
-#       - name: Checkout madara-runner repository
-#         uses: actions/checkout@v3
-#         with:
-#           repository: neotheprogramist/starknet-rpc-tests
-#           path: madara-runner
+      - name: Checkout madara-runner repository
+        uses: actions/checkout@v3
+        with:
+          repository: neotheprogramist/starknet-rpc-tests
+          path: madara-runner
 
-#       - name: Scarb build
-#         run: |
-#           scarb build
-#         working-directory: madara-runner
+      - name: Scarb build
+        run: |
+          scarb build
+        working-directory: madara-runner
 
-#       - name: Build openrpc-testgen-runner
-#         run: |
-#           cargo build --release --features "openrpc" -p openrpc-testgen -p openrpc-testgen-runner
-#         working-directory: madara-runner
+      - name: Build openrpc-testgen-runner
+        run: |
+          cargo build --release --features "openrpc" -p openrpc-testgen -p openrpc-testgen-runner
+        working-directory: madara-runner
 
-#       - name: Run OpenRPC Suite
-#         run: |
-#           URLS="http://127.0.0.1:9944"
-#           target/release/openrpc-testgen-runner \
-#           --urls "${URLS}" \
-#           --paymaster-account-address "${PAYMASTER_ACCOUNT_ADDRESS}" \
-#           --paymaster-private-key "${PAYMASTER_PRIVATE_KEY}" \
-#           --udc-address "${UDC_ADDRESS}" \
-#           --account-class-hash "${ACCOUNT_CLASS_HASH}" \
-#           --suite open-rpc
+      - name: Run OpenRPC Suite
+        run: |
+          URLS="http://madara-0.madara.arc-runners.svc.cluster.local:9944"
+          target/release/openrpc-testgen-runner \
+          --urls "${URLS}" \
+          --paymaster-account-address "${PAYMASTER_ACCOUNT_ADDRESS}" \
+          --paymaster-private-key "${PAYMASTER_PRIVATE_KEY}" \
+          --udc-address "${UDC_ADDRESS}" \
+          --account-class-hash "${ACCOUNT_CLASS_HASH}" \
+          --suite open-rpc
 
-#         working-directory: madara-runner
+        working-directory: madara-runner

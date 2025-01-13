@@ -99,17 +99,6 @@
 #           mkdir -p bins
 #           cp ./target/release/madara bins/
 
-#       # - name: Start Madara sequencer
-#       #   run: |
-#       #     ./bins/madara --name Madara \
-#       #     --sequencer --preset devnet \
-#       #     --base-path ./madara_db_sequencer \
-#       #     --no-l1-sync --gateway \
-#       #     --feeder-gateway-enable --gateway-enable \
-#       #     --strk-gas-price 0 --strk-blob-gas-price 0 \
-#       #     --gas-price 0 --blob-gas-price 0 \
-#       #     --rpc-port 9945 &
-
 #       - name: Download madara binary
 #         uses: actions/download-artifact@v4
 #         with:
@@ -148,4 +137,5 @@
 #           --udc-address "${UDC_ADDRESS}" \
 #           --account-class-hash "${ACCOUNT_CLASS_HASH}" \
 #           --suite open-rpc
+
 #         working-directory: madara-runner

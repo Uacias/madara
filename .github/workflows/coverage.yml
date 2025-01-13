@@ -2,10 +2,10 @@ name: Task - Integration Tests
 
 on:
   workflow_dispatch:
-  workflow_call:
-    secrets:
-      ETH_FORK_URL:
-        required: true
+  # workflow_call:
+  #   secrets:
+  #     ETH_FORK_URL:
+  #       required: true
 
 jobs:
   coverage:

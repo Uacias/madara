@@ -3,7 +3,7 @@ on:
   push:
     branches:
       - uacias/workflow 
-
+  workflow_dispatch:
 
 jobs:
   Explore-GitHub-Actions:

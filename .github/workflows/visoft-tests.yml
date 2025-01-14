@@ -9,7 +9,7 @@ jobs:
   build:
     permissions:
       pull-requests: write
-    runs-on: arc-runner-set
+    runs-on: madara-arc-runner-set
 
     steps:
       - uses: actions/checkout@v3

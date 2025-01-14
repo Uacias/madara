@@ -78,9 +78,14 @@ jobs:
 
       - run: chmod +x /tmp/bins/madara
 
+      - name: Copy chain config
+        run: |
+          mkdir -p /tmp/configs
+          cp ./configs/visoft-tests.yaml /tmp/configs/visoft-tests.yaml
+
       - name: Start madara full node
         run: |
-          /tmp/bins/madara --full --name Madara --preset devnet --base-path ../madara_db_full_node --no-l1-sync --strk-gas-price 0 --strk-blob-gas-price 0 --rpc-port 9944 &
+          /tmp/bins/madara --full --name Madara --chain-config-path /tmp/configs/visoft-tests.yaml --base-path ../madara_db_full_node --no-l1-sync --strk-gas-price 0 --strk-blob-gas-price 0 --rpc-port 9944 &
 
       - name: Checkout madara-runner repository
         uses: actions/checkout@v3
@@ -101,7 +106,7 @@ jobs:
 
       - name: Run OpenRPC Suite
         run: |
-          URLS="http://madara-0.madara.madara-arc-runners.svc.cluster.local:9944"
+          URLS="http://madara-0.madara.madara-arc-runners.svc.cluster.local:9945"
           target/release/openrpc-testgen-runner \
           --urls "${URLS}" \
           --paymaster-account-address "${PAYMASTER_ACCOUNT_ADDRESS}" \

@@ -101,7 +101,7 @@ jobs:
 
       - name: Run OpenRPC Suite
         run: |
-          URLS="http://madara-0.madara.arc-runners.svc.cluster.local:9944"
+          URLS="http://madara-0.madara.madara-arc-runners.svc.cluster.local:9944"
           target/release/openrpc-testgen-runner \
           --urls "${URLS}" \
           --paymaster-account-address "${PAYMASTER_ACCOUNT_ADDRESS}" \

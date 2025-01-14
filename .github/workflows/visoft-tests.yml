@@ -78,10 +78,14 @@ jobs:
 
       - run: chmod +x /tmp/bins/madara
 
+      - name: Debug: Check for visoft-tests.yaml
+          run: |
+            ls -la ./configs
+
       - name: Copy chain config
         run: |
           mkdir -p /tmp/configs
-          cp ./configs/visoft-tests.yaml /tmp/configs/visoft-tests.yaml
+          cp configs/visoft-tests.yaml /tmp/configs/visoft-tests.yaml
 
       - name: Start madara full node
         run: |

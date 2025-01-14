@@ -79,8 +79,8 @@ jobs:
       - run: chmod +x /tmp/bins/madara
 
       - name: Debug: Check for visoft-tests.yaml
-          run: |
-            ls -la ./configs
+        run: |
+           ls -la ./configs
 
       - name: Copy chain config
         run: |

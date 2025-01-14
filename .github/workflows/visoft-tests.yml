@@ -15,6 +15,7 @@ jobs:
       - uses: actions/checkout@v3
         with:
           submodules: true
+
       - name: Install Rust toolchain
         uses: actions-rs/toolchain@v1
         with:
@@ -27,17 +28,24 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y wget clang llvm libudev-dev protobuf-compiler libssl-dev pkg-config git
+
       - uses: rui314/setup-mold@v1
+
       - name: Build Madara binary
         run: |
           cargo build --release --bin madara
-          mkdir -p bins
-          cp ./target/release/madara bins/
+          mkdir -p build_artifact/bin
+          cp ./target/release/madara build_artifact/bin/
+
+      - name: Include configs in artifact
+        run: |
+          mkdir -p build_artifact/configs
+          cp -r configs/* build_artifact/configs/
 
       - uses: actions/upload-artifact@v4
         with:
-          name: madara-bins
-          path: bins
+          name: madara-build
+          path: build_artifact
 
   madara-tests:
     needs: build
@@ -48,6 +56,7 @@ jobs:
       UDC_ADDRESS: "0x041a78e741e5af2fec34b695679bc6891742439f7afb8484ecd7766661ad02bf"
       ACCOUNT_CLASS_HASH: "0xe2eb8f5672af4e6a4e8a8f1b44989685e668489b0a25437733756c5a34a1d6"
       SCARB_VERSION: "2.8.4"
+
     steps:
       - name: Install build dependencies
         run: |
@@ -62,7 +71,6 @@ jobs:
       - name: Cache Rust dependencies
         uses: Swatinem/rust-cache@v2
 
-    
       - name: Install Scarb
         run: |
           export PATH="$HOME/.local/bin:$HOME/.cargo/bin:$PATH"
@@ -70,28 +78,27 @@ jobs:
           echo "$HOME/.local/bin" >> $GITHUB_PATH
           echo "$HOME/.cargo/bin" >> $GITHUB_PATH
 
-      - name: Download madara binary
+      - name: Download Madara build
         uses: actions/download-artifact@v4
         with:
-          name: madara-bins
-          path: /tmp/bins
+          name: madara-build
+          path: /tmp/build_artifact
 
-      - run: chmod +x /tmp/bins/madara
+      - run: chmod +x /tmp/build_artifact/bin/madara
 
-      - name: Check for visoft-tests.yaml
+      - name: Start Madara full node
         run: |
-           ls -la ./configs
+          /tmp/build_artifact/bin/madara \
+            --full \
+            --name Madara \
+            --chain-config-path /tmp/build_artifact/configs/visoft-tests.yaml \
+            --base-path ../madara_db_full_node \
+            --no-l1-sync \
+            --strk-gas-price 0 \
+            --strk-blob-gas-price 0 \
+            --rpc-port 9944 &
 
-      - name: Copy chain config
-        run: |
-          mkdir -p /tmp/configs
-          cp configs/visoft-tests.yaml /tmp/configs/visoft-tests.yaml
-
-      - name: Start madara full node
-        run: |
-          /tmp/bins/madara --full --name Madara --chain-config-path /tmp/configs/visoft-tests.yaml --base-path ../madara_db_full_node --no-l1-sync --strk-gas-price 0 --strk-blob-gas-price 0 --rpc-port 9944 &
-
-      - name: Checkout madara-runner repository
+      - name: Checkout Madara Runner repository
         uses: actions/checkout@v3
         with:
           repository: neotheprogramist/starknet-rpc-tests
@@ -110,13 +117,12 @@ jobs:
 
       - name: Run OpenRPC Suite
         run: |
-          URLS="http://madara-0.madara.madara-arc-runners.svc.cluster.local:9945"
+          URLS="http://localhost:9944"
           target/release/openrpc-testgen-runner \
-          --urls "${URLS}" \
-          --paymaster-account-address "${PAYMASTER_ACCOUNT_ADDRESS}" \
-          --paymaster-private-key "${PAYMASTER_PRIVATE_KEY}" \
-          --udc-address "${UDC_ADDRESS}" \
-          --account-class-hash "${ACCOUNT_CLASS_HASH}" \
-          --suite open-rpc
-
+            --urls "${URLS}" \
+            --paymaster-account-address "${PAYMASTER_ACCOUNT_ADDRESS}" \
+            --paymaster-private-key "${PAYMASTER_PRIVATE_KEY}" \
+            --udc-address "${UDC_ADDRESS}" \
+            --account-class-hash "${ACCOUNT_CLASS_HASH}" \
+            --suite open-rpc
         working-directory: madara-runner

@@ -95,18 +95,16 @@ jobs:
           /tmp/build_artifact/bin/madara \
             --full \
             --name Madara \
-            --chain-config-path /tmp/build_artifact/configs/visoft-tests.yaml \
+            --chain-config-path /tmp/build_artifact/configs/devnet.yaml \
             --base-path ../madara_db_full_node \
             --no-l1-sync \
-            --strk-gas-price 0 \
-            --strk-blob-gas-price 0 \
             --rpc-port 9944 &
 
       - name: Checkout Madara Runner repository
         uses: actions/checkout@v3
         with:
           repository: neotheprogramist/starknet-rpc-tests
-          ref: hotfix/redeclarations
+          ref: main
           path: madara-runner
 
       - name: Scarb build
